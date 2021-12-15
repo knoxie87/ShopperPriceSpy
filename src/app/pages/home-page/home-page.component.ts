@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http'
-import * as cheerio from 'cheerio';
+import { ShopperApiServiceService } from 'src/app/shopper-api-service.service';
+import { Observable } from 'rxjs';
+import { map } from 'cheerio/lib/api/traversing';
+
 
 @Component({
   selector: 'app-home-page',
@@ -9,7 +12,7 @@ import * as cheerio from 'cheerio';
 })
 export class HomePageComponent implements OnInit {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private shopperService: ShopperApiServiceService) { }
   url: any;
   food = "chocolate"
   ngOnInit(): void {
@@ -17,16 +20,11 @@ export class HomePageComponent implements OnInit {
     console.log(this.url)
   }
 
-  searchFood(): Promise<any> {
-    const cheerio = require('cheerio');
-    const promise = new Promise((resolve,reject) => {
-     this.url = this.http.get('https://www.newworld.co.nz/shop/Search?q='+ this.food).subscribe(res => {
-        resolve(res);
-      },err => {
-        reject(err);
-      });
+  searchFood(): void {
+    this.shopperService.searchNewWordFood(this.food).subscribe(foodWebpageResults => {
+      this.url = foodWebpageResults;
     })
-    return promise;
+
   }
 
       // if(promise.finally)
